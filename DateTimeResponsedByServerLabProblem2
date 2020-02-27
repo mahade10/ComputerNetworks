@@ -36,3 +36,65 @@ public class Client {
 	}
 
 }
+
+
+
+
+
+
+//server code
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Server {
+
+	public static void main(String[] args) throws IOException {
+		SimpleDateFormat formatter =  new SimpleDateFormat("dd/MM/yyyy hh.mm.ss aa");
+		SimpleDateFormat timeFormat =  new SimpleDateFormat("hh.mm.ss aa");
+		SimpleDateFormat dateFormat =  new SimpleDateFormat("dd/MM/yyyy");
+		
+		ServerSocket ss = new ServerSocket(6666);
+		Socket s = ss.accept();
+		DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+		DataInputStream dis = new DataInputStream(s.getInputStream());
+		String str;
+		dos.writeUTF("Success");
+		dos.flush();
+		System.out.println("Connection Established");
+		while(true) {
+			str = dis.readUTF();
+			if(str.equals("Hello")) {
+				dos.writeUTF("Welcome");
+				dos.flush();
+				}
+			else if(str.equals("Date")) {
+					dos.writeUTF(dateFormat.format(new Date()));
+					dos.flush();
+				}
+			else if(str.equals("Time")) {
+				dos.writeUTF(timeFormat.format(new Date()));
+				dos.flush();
+			}
+			else if(str.equals("DateTime")) {
+				dos.writeUTF(formatter.format(new Date()));
+				dos.flush();
+			}
+			else {
+				dos.writeUTF("Bad request");
+				dos.flush();
+				break;
+			}
+		}
+		
+	dos.close();
+	dis.close();
+	s.close();
+	    
+	}
+
+}
